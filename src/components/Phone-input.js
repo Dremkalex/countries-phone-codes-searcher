@@ -13,11 +13,14 @@ export default class PhoneInput extends Component {
         cursor: -1,
         phoneFilter: '380',
         countryIso: 'ua',
-        showCountryList: false
+        countryList: countriesData.allCountries,
+        showCountryList: false,
+        initial: true
     }
 
     _updatePhoneFilter = ({ target: { value }}) => this.setState({
         phoneFilter: value,
+        initial: false
     })
 
     _toggleCountryList = () => this.setState(({ showCountryList }) => {
@@ -36,38 +39,39 @@ export default class PhoneInput extends Component {
 
     _getCountry = (value, code) => this.setState({
         countryIso: value,
-        phoneFilter: code
+        phoneFilter: code,
+        showCountryList: false
     })
 
     _handleKeyDown = (e) => {
         const upKey = e.key === 'ArrowUp';
         const downKey = e.key === 'ArrowDown'
 
-        console.log('robe!');
         if(!upKey && !downKey) return;
 
         e.preventDefault();
-        const { cursor } = this.state;
-        const { allCountries } = countriesData;
+        const { cursor, countryList } = this.state;
+        //const { allCountries } = countriesData;
         
         if (upKey && cursor > 0) {
             this.setState( prevState => ({
                 cursor: prevState.cursor - 1,
-                countryIso: allCountries[prevState.cursor - 1].iso2,
-                phoneFilter: allCountries[prevState.cursor - 1].dialCode
+                countryIso: countryList[prevState.cursor - 1].iso2,
+                phoneFilter: countryList[prevState.cursor - 1].dialCode
             }))
-        } else if (downKey && cursor < allCountries.length - 1) {
+        } else if (downKey && cursor < countryList.length - 1) {
             this.setState( prevState => ({
                 cursor: prevState.cursor + 1,
-                countryIso: allCountries[prevState.cursor + 1].iso2,
-                phoneFilter: allCountries[prevState.cursor + 1].dialCode
+                countryIso: countryList[prevState.cursor + 1].iso2,
+                phoneFilter: countryList[prevState.cursor + 1].dialCode
             }))
         }
     }
 
     render() {
-        const { cursor, phoneFilter, countryIso, showCountryList } = this.state;
-        const { allCountries } = countriesData;
+        const { cursor, phoneFilter, countryIso, countryList, showCountryList, initial } = this.state;
+        //const { allCountries } = countriesData;
+        const countries = initial ? countryList : countryList.length > 0 && countryList.filter(({dialCode}) => dialCode.startsWith(phoneFilter))
         const btnActive = showCountryList ? 'btnActive' : '';
 
         return (
@@ -95,8 +99,8 @@ export default class PhoneInput extends Component {
                 { showCountryList &&
                     <CountriesList
                         countryData = { this._getCountry }
-                        searchValue = { phoneFilter }
-                        countries = { allCountries } 
+                        //searchValue = { phoneFilter }
+                        countries = { countries } 
                         activeCountry = { cursor }
                     />}
             </section>

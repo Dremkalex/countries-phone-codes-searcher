@@ -10,12 +10,8 @@ export default class CountriesList extends Component {
         this.props.countryData(iso2, dialCode);
     }
 
-    render () {
-        
+    render () {        
         const { countries, activeCountry } = this.props;
-
-        //const countries = searchValue ? allCountries.filter(({dialCode}) => dialCode.includes(searchValue)) : allCountries;
-        //const countries =  allCountries;
 
         const countriesJSX = countries.length > 0 && countries.map(({name, dialCode, iso2}, index) => {
             const isActive = activeCountry === index ? 'active' : '';
